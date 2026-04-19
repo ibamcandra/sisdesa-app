@@ -1,0 +1,47 @@
+services:
+  # Laravel App
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sisdesa-app
+    container_name: sisdesa-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    ports:
+      - "20263:8000"
+    networks:
+      - sisdesa-net
+
+  # Database PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: sisdesa-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sisdesa_db
+      POSTGRES_USER: lizam
+      POSTGRES_PASSWORD: kmzway87aa
+    volumes:
+      - ./docker/postgres:/var/lib/postgresql/data
+    networks:
+      - sisdesa-net
+
+  # pgAdmin
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: sisdesa-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: lizam.hermansyah@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: kmzway87aa
+    ports:
+      - "20264:80"
+    networks:
+      - sisdesa-net
+
+networks:
+  sisdesa-net:
+    driver: bridge
