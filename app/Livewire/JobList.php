@@ -22,6 +22,7 @@ class JobList extends Component {
 
     public function render() {
         $vacancies = Vacancy::query()
+            ->with(['branch', 'user'])
             ->where(function($q) {
                 $q->whereNull('close_date')
                   ->orWhere('close_date', '>=', now()->startOfDay());

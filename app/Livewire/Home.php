@@ -15,7 +15,7 @@ class Home extends Component
     {
         return view('livewire.home-page', [
             'posts' => Post::where('is_published', true)->latest('published_at')->take(3)->get(),
-            'vacancies' => Vacancy::where(function($q) {
+            'vacancies' => Vacancy::with(['branch', 'user'])->where(function($q) {
                 $q->whereNull('close_date')
                   ->orWhere('close_date', '>=', now()->startOfDay());
             })->latest()->take(4)->get(),

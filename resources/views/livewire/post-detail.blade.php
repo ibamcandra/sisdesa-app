@@ -27,7 +27,7 @@
                 @endif
             </div>
 
-            <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed font-serif">
+            <div class="prose prose-lg prose-red max-w-none text-gray-700 leading-relaxed prose-headings:font-black prose-headings:text-gray-900 prose-p:mb-6">
                 {!! $post->content !!}
             </div>
 
@@ -62,6 +62,9 @@
                     </div>
                     <a href="/kabar" class="block w-full text-center mt-8 py-3 bg-gray-50 text-gray-900 text-xs font-bold rounded-xl hover:bg-gray-100 transition-colors">Lihat Semua</a>
                 </div>
+
+                <!-- Ad Slot: Sidebar -->
+                <x-ad-slot location="sidebar" />
 
                 {{-- CTA Card --}}
                 <div class="bg-kt-red p-8 rounded-[2.5rem] text-white shadow-xl shadow-red-100">

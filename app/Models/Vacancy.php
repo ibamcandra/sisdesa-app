@@ -6,10 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Vacancy extends Model
 {
+    use LogsActivity;
+
     protected $guarded = [];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty();
+    }
 
     protected $casts = [
         'close_date' => 'date',
@@ -21,6 +32,14 @@ class Vacancy extends Model
             if (empty($vacancy->slug)) {
                 $vacancy->slug = Str::slug($vacancy->title) . '-' . Str::random(5);
             }
+        });
+
+        static::saved(function ($vacancy) {
+            \App\Jobs\UpdateSitemapJob::dispatch();
+        });
+
+        static::deleted(function ($vacancy) {
+            \App\Jobs\UpdateSitemapJob::dispatch();
         });
     }
 

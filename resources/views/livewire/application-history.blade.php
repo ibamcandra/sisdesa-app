@@ -74,10 +74,20 @@
                                 @endphp
                                 <span 
                                     @if($app->status === 'Interview')
-                                        x-on:click="$dispatch('open-interview', { 
+                                        x-on:click="$dispatch('open-modal', { 
+                                            type: 'interview',
+                                            title: 'Jadwal Interview',
                                             date: '{{ $app->interview_date?->format('d M Y') }}', 
                                             time: '{{ $app->interview_time }}', 
                                             location: '{{ $app->interview_location }}' 
+                                        })"
+                                        class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border cursor-pointer hover:scale-105 transition-transform {{ $class }}"
+                                    @elseif($app->status === 'Diterima')
+                                        x-on:click="$dispatch('open-modal', { 
+                                            type: 'acceptance',
+                                            title: 'Detail Penerimaan',
+                                            date: '{{ $app->start_date?->format('d M Y') }}', 
+                                            notes: '{{ addslashes($app->onboarding_notes) }}' 
                                         })"
                                         class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border cursor-pointer hover:scale-105 transition-transform {{ $class }}"
                                     @else
@@ -108,44 +118,69 @@
         </div>
     </div>
 
-    <!-- Modal Detail Interview (Alpine.js) -->
-    <div x-data="{ open: false, interview: {} }" 
+    <!-- Modal Detail (Alpine.js) -->
+    <div x-data="{ open: false, type: '', title: '', details: {} }" 
          x-show="open" 
-         x-on:open-interview.window="open = true; interview = $event.detail"
+         x-on:open-modal.window="open = true; type = $event.detail.type; title = $event.detail.title; details = $event.detail"
          class="fixed inset-0 z-50 overflow-y-auto" 
          style="display: none;">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity" aria-hidden="true">
+            <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute inset-0 transition-opacity" aria-hidden="true">
                 <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
             </div>
 
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-            <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-white rounded-[2.5rem] text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border-4 border-kt-red/5">
+            <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative inline-block align-bottom bg-white rounded-[2.5rem] text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border-4 border-kt-red/5 z-10">
                 <div class="bg-white px-8 pt-10 pb-8">
                     <div class="text-center mb-8">
-                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-2xl bg-purple-50 text-purple-600 mb-4">
+                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-2xl bg-purple-50 text-purple-600 mb-4" x-show="type === 'interview'">
                             <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                         </div>
-                        <h3 class="text-2xl font-black text-gray-900 tracking-tighter" id="modal-title">Jadwal Interview</h3>
-                        <p class="text-gray-500 text-sm mt-1">Harap hadir tepat waktu sesuai jadwal berikut.</p>
+                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-2xl bg-green-50 text-green-600 mb-4" x-show="type === 'acceptance'">
+                            <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-black text-gray-900 tracking-tighter" x-text="title"></h3>
+                        <p class="text-gray-500 text-sm mt-1" x-show="type === 'interview'">Harap hadir tepat waktu sesuai jadwal berikut.</p>
+                        <p class="text-gray-500 text-sm mt-1" x-show="type === 'acceptance'">Selamat bergabung! Berikut detail hari pertama Anda.</p>
                     </div>
                     
                     <div class="space-y-4">
-                        <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                            <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Tanggal</p>
-                            <p class="font-bold text-gray-900" x-text="interview.date"></p>
-                        </div>
-                        <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                            <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Jam</p>
-                            <p class="font-bold text-gray-900" x-text="interview.time"></p>
-                        </div>
-                        <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                            <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Tempat / Link</p>
-                            <p class="font-bold text-gray-900" x-text="interview.location"></p>
-                        </div>
+                        <!-- Interview Fields -->
+                        <template x-if="type === 'interview'">
+                            <div class="space-y-4">
+                                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Tanggal</p>
+                                    <p class="font-bold text-gray-900" x-text="details.date"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Jam</p>
+                                    <p class="font-bold text-gray-900" x-text="details.time"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Tempat / Link</p>
+                                    <p class="font-bold text-gray-900" x-text="details.location"></p>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Acceptance Fields -->
+                        <template x-if="type === 'acceptance'">
+                            <div class="space-y-4">
+                                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Tanggal Mulai Bekerja</p>
+                                    <p class="font-bold text-gray-900" x-text="details.date"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Catatan / Persiapan</p>
+                                    <p class="font-bold text-gray-900 whitespace-pre-line" x-text="details.notes"></p>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </div>
                 <div class="bg-gray-50 px-8 py-6 flex flex-col sm:flex-row-reverse gap-3">

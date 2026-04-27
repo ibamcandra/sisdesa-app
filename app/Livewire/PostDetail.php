@@ -4,7 +4,8 @@ namespace App\Livewire;
 
 use App\Models\Post;
 use Livewire\Component;
-use Livewire\Attributes\Title;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class PostDetail extends Component
 {
@@ -15,9 +16,14 @@ class PostDetail extends Component
         $this->post = Post::where('slug', $slug)
             ->where('is_published', true)
             ->firstOrFail();
+            
+        $viewed = session()->get('viewed_posts', []);
+        if (!in_array($this->post->id, $viewed)) {
+            $this->post->increment('views');
+            session()->push('viewed_posts', $this->post->id);
+        }
     }
 
-    #[Title('Detail Kabar')]
     public function render()
     {
         $recentPosts = Post::where('is_published', true)
@@ -28,6 +34,11 @@ class PostDetail extends Component
 
         return view('livewire.post-detail', [
             'recentPosts' => $recentPosts
+        ])->layoutData([
+            'title' => $this->post->seo_title ?? $this->post->title,
+            'meta_description' => $this->post->seo_description ?? $this->post->excerpt ?? Str::limit(strip_tags($this->post->content), 160),
+            'meta_keywords' => $this->post->seo_keywords,
+            'og_image' => $this->post->thumbnail ? Storage::url($this->post->thumbnail) : null,
         ]);
     }
 }

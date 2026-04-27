@@ -27,7 +27,14 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        $company = CompanyProfile::first();
+        $company = null;
+        try {
+            if (!app()->runningInConsole()) {
+                $company = CompanyProfile::first();
+            }
+        } catch (\Throwable $e) {
+            // Ignore DB errors during boot
+        }
 
         return $panel
             ->default()

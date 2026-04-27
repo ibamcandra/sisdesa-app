@@ -4,9 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Post extends Model
 {
+    use LogsActivity;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty();
+    }
+
     protected $fillable = [
         'title',
         'slug',
@@ -14,12 +25,18 @@ class Post extends Model
         'thumbnail',
         'category',
         'is_published',
-        'published_at'
+        'views',
+        'published_at',
+        'excerpt',
+        'seo_title',
+        'seo_description',
+        'seo_keywords',
     ];
 
     protected $casts = [
         'published_at' => 'datetime',
         'is_published' => 'boolean',
+        'views' => 'integer',
     ];
 
     protected static function booted()
@@ -28,6 +45,14 @@ class Post extends Model
             if (!$post->slug) {
                 $post->slug = Str::slug($post->title);
             }
+        });
+
+        static::saved(function ($post) {
+            \App\Jobs\UpdateSitemapJob::dispatch();
+        });
+
+        static::deleted(function ($post) {
+            \App\Jobs\UpdateSitemapJob::dispatch();
         });
     }
 }

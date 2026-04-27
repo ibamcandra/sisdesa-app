@@ -8,6 +8,7 @@ class JobApplication extends Model {
 
     protected $casts = [
         'interview_date' => 'date',
+        'start_date' => 'date',
     ];
 
     public function vacancy(): BelongsTo { return $this->belongsTo(Vacancy::class); }

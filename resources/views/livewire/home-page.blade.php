@@ -12,6 +12,17 @@
                 Website Informasi <br class="hidden md:block"/> <span class="text-kt-red italic underline decoration-kt-yellow decoration-4">Lowongan Kerja</span> dan Kegiatan.
             </h1>
             <p class="text-gray-500 text-sm md:text-lg">Guyub Rukun membangun Desa Campaka yang lebih maju dan berdaya saing.</p>
+            
+            {{-- Registrasi untuk Mobile --}}
+            @guest
+                <div class="mt-6 flex flex-col gap-3 md:hidden">
+                    <a href="/register" class="h-14 bg-kt-red text-white font-bold rounded-2xl shadow-lg shadow-red-200 flex items-center justify-center gap-2 active:scale-95 transition-transform">
+                        Daftar Sebagai Pelamar
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                    </a>
+                    <p class="text-[10px] text-gray-400 text-center uppercase tracking-widest font-bold">Gratis & Cepat</p>
+                </div>
+            @endguest
         </div>
         
         <div class="mt-8 md:mt-0 flex flex-col gap-3 w-full md:max-w-md bg-white p-6 md:p-8 rounded-[2rem] md:shadow-2xl md:shadow-gray-200/50">
@@ -57,7 +68,7 @@
                 <div class="h-48 bg-gray-50 relative overflow-hidden">
                     <div class="absolute top-4 left-4 z-10 px-3 py-1 bg-white/90 backdrop-blur-md text-kt-red text-[8px] font-bold rounded-full uppercase tracking-wider shadow-sm">{{ $post->category ?? 'Umum' }}</div>
                     @if($post->thumbnail)
-                        <img src="{{ Storage::url($post->thumbnail) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="{{ $post->title }}">
+                        <img src="{{ Storage::url($post->thumbnail) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="{{ $post->title }}" loading="lazy">
                     @else
                         <div class="w-full h-full flex items-center justify-center bg-kt-yellow/20 text-kt-red/20 font-black text-2xl italic">KT</div>
                     @endif
@@ -75,6 +86,11 @@
         </div>
     </section>
 
+    <!-- Ad Slot: Home Middle -->
+    <div class="px-4 md:px-0">
+        <x-ad-slot location="home_middle" />
+    </div>
+
     <section class="px-4 py-8">
         <div class="flex items-center justify-between mb-6">
             <div class="flex flex-col">
@@ -91,7 +107,7 @@
                     <div class="flex justify-between items-start mb-6">
                         @if($company && $company->logo)
                             <div class="w-16 h-16 bg-white rounded-[1.5rem] flex items-center justify-center border border-gray-100 shadow-sm overflow-hidden">
-                                <img src="{{ Storage::url($company->logo) }}" alt="Logo" class="w-full h-full object-contain p-2">
+                                <img src="{{ Storage::url($company->logo) }}" alt="Logo" class="w-full h-full object-contain p-2" loading="lazy">
                             </div>
                         @else
                             <div class="w-16 h-16 bg-kt-yellow rounded-[1.5rem] flex items-center justify-center border-2 border-kt-red">

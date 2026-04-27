@@ -12,6 +12,8 @@ use App\Models\City;
 use App\Models\District;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Title;
@@ -58,6 +60,10 @@ class Profile extends Component
     public $showSkillForm = false;
     public $selectedSkills = [];
     public $availableSkills = [];
+
+    // Password Update
+    public $showPasswordForm = false;
+    public $current_password, $new_password, $new_password_confirmation;
 
     // Konfirmasi Hapus
     public $confirmDeletionId = null;
@@ -146,7 +152,7 @@ class Profile extends Component
         $this->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'nullable|numeric|digits_between:10,15',
             'birth_date' => 'nullable|date',
             'gender' => 'nullable|in:Laki-laki,Perempuan',
             'address' => 'nullable|string|max:500',
@@ -468,12 +474,67 @@ class Profile extends Component
             ApplicantCertification::findOrFail($this->confirmDeletionId)->delete();
         } elseif ($this->confirmDeletionType === 'cv') {
             $this->deleteCv();
+        } elseif ($this->confirmDeletionType === 'account') {
+            $this->deleteAccount();
+            return;
         }
 
         $this->confirmDeletionId = null;
         $this->confirmDeletionType = null;
         $this->dispatch('close-delete-modal');
         session()->flash('success', 'Data berhasil dihapus.');
+    }
+
+    public function deleteAccount()
+    {
+        $user = Auth::user();
+        
+        if ($user->role !== 'pelamar') {
+            session()->flash('error', 'Hanya akun pelamar yang dapat dihapus sendiri.');
+            $this->dispatch('close-delete-modal');
+            return;
+        }
+
+        // Hapus file fisik (Avatar & CV)
+        if ($this->applicant->avatar) {
+            Storage::disk('public')->delete($this->applicant->avatar);
+        }
+        if ($this->applicant->cv_file) {
+            Storage::disk('public')->delete($this->applicant->cv_file);
+        }
+
+        // Hapus user - Cascade di database akan menghapus applicant_profile, 
+        // experiences, educations, certifications, skills, dan applications.
+        $user->delete();
+
+        Auth::logout();
+        session()->invalidate();
+        session()->regenerateToken();
+
+        return redirect()->to('/');
+    }
+
+    // ==========================================
+    // UPDATE PASSWORD
+    // ==========================================
+    public function updatePassword()
+    {
+        $this->validate([
+            'current_password' => ['required', 'current_password'],
+            'new_password' => ['required', 'confirmed', Password::min(8)],
+        ], [
+            'current_password.current_password' => 'Password saat ini tidak cocok.',
+            'new_password.confirmed' => 'Konfirmasi password baru tidak cocok.',
+            'new_password.min' => 'Password baru minimal 8 karakter.',
+        ]);
+
+        $user = Auth::user();
+        $user->update([
+            'password' => Hash::make($this->new_password)
+        ]);
+
+        $this->reset(['current_password', 'new_password', 'new_password_confirmation', 'showPasswordForm']);
+        session()->flash('success', 'Password berhasil diperbarui.');
     }
 
     // ==========================================

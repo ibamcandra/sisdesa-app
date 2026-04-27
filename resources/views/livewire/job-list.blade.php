@@ -34,7 +34,7 @@
                     <div class="flex justify-between items-start mb-4">
                         @if($company && $company->logo)
                             <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center border border-gray-100 shadow-sm overflow-hidden">
-                                <img src="{{ Storage::url($company->logo) }}" alt="Logo" class="w-full h-full object-contain p-2">
+                                <img src="{{ Storage::url($company->logo) }}" alt="Logo" class="w-full h-full object-contain p-2" loading="lazy">
                             </div>
                         @else
                             <div class="w-14 h-14 bg-kt-yellow rounded-2xl flex items-center justify-center border-2 border-kt-red">

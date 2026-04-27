@@ -30,7 +30,7 @@
                     {{-- Thumbnail --}}
                     <a href="/kabar/{{ $post->slug }}" class="relative aspect-[16/10] overflow-hidden">
                         @if($post->thumbnail)
-                            <img src="{{ Storage::url($post->thumbnail) }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <img src="{{ Storage::url($post->thumbnail) }}" alt="{{ $post->title }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                         @else
                             <div class="w-full h-full bg-kt-yellow/30 flex items-center justify-center">
                                 <span class="text-kt-red font-black text-2xl opacity-20">KT</span>
@@ -49,9 +49,13 @@
                             <span>5 Menit Baca</span>
                         </div>
                         
-                        <h3 class="text-xl font-bold text-gray-900 group-hover:text-kt-red transition-colors leading-tight mb-4 flex-1">
+                        <h3 class="text-xl font-bold text-gray-900 group-hover:text-kt-red transition-colors leading-tight mb-2">
                             <a href="/kabar/{{ $post->slug }}">{{ $post->title }}</a>
                         </h3>
+
+                        <p class="text-gray-500 text-sm line-clamp-2 mb-4 flex-1">
+                            {{ $post->excerpt ?? Str::limit(strip_tags($post->content), 100) }}
+                        </p>
 
                         <div class="flex items-center justify-between pt-6 border-t border-gray-50">
                             <a href="/kabar/{{ $post->slug }}" class="text-sm font-bold text-gray-900 flex items-center gap-2 group/btn">

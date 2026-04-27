@@ -12,6 +12,7 @@ services:
       - ./:/var/www
     ports:
       - "20263:8000"
+    command: php artisan serve --host=0.0.0.0 --port=8000
     networks:
       - sisdesa-net
 

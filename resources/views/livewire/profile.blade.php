@@ -60,8 +60,14 @@
                     <span class="w-1.5 h-6 bg-kt-red rounded-full"></span>
                     Data Pribadi
                 </h3>
-                <button wire:click="toggleEditPersonal" class="text-xs font-bold text-kt-red">
-                    {{ $editingPersonal ? 'Batal' : 'Ubah' }}
+                <button wire:click="toggleEditPersonal" class="flex items-center gap-2 px-4 py-2 bg-red-50 hover:bg-kt-red text-kt-red hover:text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-300 shadow-sm shadow-red-50/50">
+                    @if($editingPersonal)
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        Batal
+                    @else
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        Ubah
+                    @endif
                 </button>
             </div>
 
@@ -79,7 +85,7 @@
                     </div>
                     <div class="flex flex-col gap-1">
                         <label class="text-[10px] text-gray-400 font-bold uppercase tracking-widest ml-1">Telepon</label>
-                        <input type="text" wire:model="phone" class="w-full h-11 bg-gray-50 border-none rounded-xl px-4 text-sm focus:ring-2 focus:ring-kt-red">
+                        <input type="tel" wire:model="phone" class="w-full h-11 bg-gray-50 border-none rounded-xl px-4 text-sm focus:ring-2 focus:ring-kt-red" placeholder="Contoh: 08123456789">
                         @error('phone') <span class="text-red-500 text-[10px] font-bold">{{ $message }}</span> @enderror
                     </div>
                     <div class="flex flex-col gap-1">
@@ -420,8 +426,14 @@
                     <span class="w-1.5 h-6 bg-kt-red rounded-full"></span>
                     Keahlian
                 </h3>
-                <button wire:click="toggleSkillForm" class="text-xs font-bold text-kt-red">
-                    {{ $showSkillForm ? 'Batal' : 'Ubah' }}
+                <button wire:click="toggleSkillForm" class="flex items-center gap-2 px-4 py-2 bg-red-50 hover:bg-kt-red text-kt-red hover:text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-300 shadow-sm shadow-red-50/50">
+                    @if($showSkillForm)
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        Batal
+                    @else
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        Ubah
+                    @endif
                 </button>
             </div>
 
@@ -511,6 +523,79 @@
                 </div>
             </div>
         </div>
+
+        {{-- Section: Keamanan Akun --}}
+        <div class="bg-white p-6 md:p-8 rounded-[2.5rem] border border-gray-50 shadow-sm">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center gap-3">
+                    <span class="w-1.5 h-6 bg-kt-red rounded-full"></span>
+                    Keamanan Akun
+                </h3>
+                <button wire:click="$toggle('showPasswordForm')" class="flex items-center gap-2 px-4 py-2 bg-red-50 hover:bg-kt-red text-kt-red hover:text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-300 shadow-sm shadow-red-50/50">
+                    @if($showPasswordForm)
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        Batal
+                    @else
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                        Ganti Password
+                    @endif
+                </button>
+            </div>
+
+            @if($showPasswordForm)
+                <form wire:submit.prevent="updatePassword" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] text-gray-400 font-bold uppercase tracking-widest ml-1">Password Saat Ini</label>
+                        <input type="password" wire:model="current_password" class="w-full h-11 bg-gray-50 border-none rounded-xl px-4 text-sm focus:ring-2 focus:ring-kt-red shadow-sm">
+                        @error('current_password') <span class="text-red-500 text-[10px] font-bold">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] text-gray-400 font-bold uppercase tracking-widest ml-1">Password Baru</label>
+                        <input type="password" wire:model="new_password" class="w-full h-11 bg-gray-50 border-none rounded-xl px-4 text-sm focus:ring-2 focus:ring-kt-red shadow-sm">
+                        @error('new_password') <span class="text-red-500 text-[10px] font-bold">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] text-gray-400 font-bold uppercase tracking-widest ml-1">Konfirmasi Password</label>
+                        <input type="password" wire:model="new_password_confirmation" class="w-full h-11 bg-gray-50 border-none rounded-xl px-4 text-sm focus:ring-2 focus:ring-kt-red shadow-sm">
+                    </div>
+                    <div class="md:col-span-3 flex justify-end mt-2">
+                        <button type="submit" class="px-6 py-2 bg-kt-red text-white text-xs font-bold rounded-xl shadow-lg shadow-red-50">Perbarui Password</button>
+                    </div>
+                </form>
+            @else
+                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-gray-100">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-900">Kata Sandi</p>
+                            <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Ganti password secara berkala untuk keamanan</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+
+        {{-- Section: Hapus Akun (Pelamar Only) --}}
+        @if(auth()->user()->role === 'pelamar')
+            <div class="mt-12 bg-red-50 p-8 rounded-[2.5rem] border border-red-100 shadow-sm shadow-red-50/50">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="flex-1 text-center md:text-left">
+                        <h3 class="text-lg font-black text-red-900 flex items-center justify-center md:justify-start gap-3 mb-2">
+                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            Zona Berbahaya
+                        </h3>
+                        <p class="text-sm text-red-700/70 font-medium">
+                            Menghapus akun akan menghapus seluruh data profil, riwayat pendidikan, pengalaman kerja, sertifikasi, dan seluruh lamaran kerja Anda secara permanen.
+                        </p>
+                    </div>
+                    <button wire:click="confirmDelete(0, 'account')" class="whitespace-nowrap px-8 py-4 bg-kt-red hover:opacity-90 text-white text-sm font-black uppercase tracking-widest rounded-2xl transition-all duration-300 shadow-lg shadow-red-200 active:scale-95">
+                        HAPUS PROFILE SAYA
+                    </button>
+                </div>
+            </div>
+        @endif
     </div>
 
     {{-- Modal Konfirmasi Hapus --}}
@@ -521,22 +606,28 @@
          class="fixed inset-0 z-[100] overflow-y-auto" 
          style="display: none;">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity bg-gray-900/60 backdrop-blur-sm" aria-hidden="true"></div>
+            <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity bg-gray-900/40" aria-hidden="true"></div>
 
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-            <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-[2.5rem] shadow-2xl sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-8">
+            <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative z-10 inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-[2.5rem] shadow-2xl sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-8">
                 <div>
                     <div class="flex items-center justify-center w-16 h-16 mx-auto bg-red-50 rounded-full">
                         <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                     </div>
                     <div class="mt-4 text-center">
-                        <h3 class="text-xl font-black text-gray-900 tracking-tighter">Hapus Data?</h3>
-                        <p class="mt-2 text-sm text-gray-500">Tindakan ini tidak dapat dibatalkan. Apakah Anda yakin ingin menghapus data ini dari profil Anda?</p>
+                        <h3 class="text-xl font-black text-gray-900 tracking-tighter">
+                            {{ $confirmDeletionType === 'account' ? 'Hapus Akun Permanen?' : 'Hapus Data?' }}
+                        </h3>
+                        <p class="mt-2 text-sm text-gray-500">
+                            {{ $confirmDeletionType === 'account' 
+                                ? 'Tindakan ini akan menghapus akun Anda dan seluruh data terkait secara permanen. Anda tidak akan bisa masuk kembali menggunakan akun ini.' 
+                                : 'Tindakan ini tidak dapat dibatalkan. Apakah Anda yakin ingin menghapus data ini dari profil Anda?' }}
+                        </p>
                     </div>
                 </div>
                 <div class="mt-8 flex flex-col gap-3">
-                    <button wire:click="deleteConfirmed" class="w-full py-4 text-sm font-bold text-white bg-red-500 rounded-2xl shadow-lg shadow-red-100 active:scale-95 transition-transform">Ya, Hapus Sekarang</button>
+                    <button wire:click="deleteConfirmed" class="w-full py-4 text-sm font-bold text-white bg-kt-red rounded-2xl shadow-lg shadow-red-100 active:scale-95 transition-transform">Ya, Hapus Sekarang</button>
                     <button x-on:click="open = false" class="w-full py-4 text-sm font-bold text-gray-500 bg-gray-50 rounded-2xl hover:bg-gray-100 active:scale-95 transition-transform">Batal</button>
                 </div>
             </div>

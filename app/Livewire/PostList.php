@@ -42,6 +42,8 @@ class PostList extends Component
         return view('livewire.post-list', [
             'posts' => $posts,
             'categories' => $categories
+        ])->layoutData([
+            'meta_description' => 'Kumpulan kabar terbaru, kegiatan, dan informasi resmi dari Desa Campaka. Dapatkan berita terupdate seputar pembangunan dan kegiatan desa.'
         ]);
     }
 }

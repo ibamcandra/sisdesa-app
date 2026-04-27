@@ -20,9 +20,13 @@
             
             <div class="success-box">
                 <p>Kami sangat senang menginformasikan bahwa Anda dinyatakan <strong>DITERIMA</strong> untuk bergabung bersama kami pada posisi <strong>{{ $application->vacancy->title }}</strong>.</p>
+                <hr style="border: 0; border-top: 1px solid #dcfce7; margin: 15px 0;">
+                <p><strong>Detail Bergabung:</strong></p>
+                <p>📅 Tanggal Mulai: {{ \Carbon\Carbon::parse($application->start_date)->format('d M Y') }}</p>
+                <p>📝 Catatan / Persiapan: {{ $application->onboarding_notes }}</p>
             </div>
             
-            <p>Tim HR kami akan segera menghubungi Anda kembali melalui WhatsApp atau Email untuk membicarakan langkah selanjutnya terkait penawaran kerja (*Offering Letter*) dan dokumen yang diperlukan.</p>
+            <p>Tim kami akan segera menghubungi Anda kembali untuk membicarakan langkah selanjutnya terkait penawaran kerja (*Offering Letter*) dan dokumen yang diperlukan.</p>
             
             <p>Selamat bergabung di keluarga besar Karang Taruna Desa Campaka!</p>
         </div>

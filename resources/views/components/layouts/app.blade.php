@@ -16,32 +16,55 @@
     @endif
 
     <!-- SEO Meta Tags -->
-    <title>{{ ($title ?? null) ? $title . ' | ' . $site_name : $site_name }}</title>
+    <title>{{ ($title ?? null) ? $title . ' | ' . $site_name : 'Desa Campaka Purwakarta | ' . $site_name }}</title>
     <meta name="description" content="{{ $meta_description ?? 'Portal lowongan kerja dan informasi resmi Karang Taruna Desa Campaka, Purwakarta. Temukan karir impianmu dan berkontribusi untuk desa.' }}">
-    <meta name="keywords" content="loker purwakarta, lowongan kerja desa campaka, karang taruna campaka, kerja di desa, nyarigawe">
+    <meta name="keywords" content="{{ $meta_keywords ?? 'desa campaka purwakarta, loker purwakarta, lowongan kerja desa campaka, karang taruna campaka, kerja di desa, nyarigawe' }}">
     <meta name="author" content="Karang Taruna Desa Campaka">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="{{ $title ?? $site_name }}">
+    <meta property="og:title" content="{{ $title ?? 'Desa Campaka Purwakarta' }}">
     <meta property="og:description" content="{{ $meta_description ?? 'Portal lowongan kerja resmi Desa Campaka.' }}">
-    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
+    <meta property="og:image" content="{{ $og_image ?? asset('images/og-image.jpg') }}">
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Local Business Schema -->
+    <script type="application/ld+json">
+    {
+      "@@context": "https://schema.org",
+      "@@type": "GovernmentOrganization",
+      "name": "Karang Taruna Desa Campaka",
+      "alternateName": "Desa Campaka Purwakarta",
+      "url": "https://www.karangtarunacampaka.id",
+      "logo": "{{ $company && $company->logo ? Storage::url($company->logo) : asset('favicon.ico') }}",
+      "contactPoint": {
+        "@@type": "ContactPoint",
+        "telephone": "",
+        "contactType": "customer service",
+        "areaServed": "ID",
+        "availableLanguage": "Indonesian"
+      },
+      "address": {
+        "@@type": "PostalAddress",
+        "streetAddress": "Desa Campaka",
+        "addressLocality": "Purwakarta",
+        "addressRegion": "Jawa Barat",
+        "postalCode": "41181",
+        "addressCountry": "ID"
+      },
+      "sameAs": [
+        "https://www.facebook.com/karangtarunacampaka",
+        "https://www.instagram.com/karangtarunacampaka"
+      ]
+    }
+    </script>
+
+    @stack('meta')
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .bg-kt-red { background-color: #e31e24; }
-        .text-kt-red { color: #e31e24; }
-        .bg-kt-yellow { background-color: #fff200; }
-        .border-kt-yellow { border-color: #fff200; }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        [x-cloak] { display: none !important; }
-    </style>
     @livewireStyles
 </head>
 <body class="bg-gray-50 text-gray-900" x-data="{ open: false }">
@@ -118,10 +141,15 @@
             
             <div class="mt-6 pt-6 border-t border-gray-100 flex flex-col gap-3">
                 @guest
-                    <a href="/login" class="flex items-center justify-center gap-2 p-4 bg-gray-100 text-gray-600 rounded-2xl font-bold">
-                        Login Pelamar
-                    </a>
-                    <a href="/admin" class="flex items-center justify-center gap-2 p-4 bg-kt-red text-white rounded-2xl font-bold shadow-lg shadow-red-100">
+                    <div class="grid grid-cols-2 gap-3">
+                        <a href="/login" class="flex items-center justify-center p-4 bg-gray-100 text-gray-600 rounded-2xl font-bold">
+                            Login
+                        </a>
+                        <a href="/register" class="flex items-center justify-center p-4 bg-kt-red text-white rounded-2xl font-bold shadow-lg shadow-red-100">
+                            Daftar
+                        </a>
+                    </div>
+                    <a href="/admin" class="flex items-center justify-center gap-2 p-4 border border-gray-100 text-gray-400 rounded-2xl font-bold">
                         Login Admin
                     </a>
                 @endguest
@@ -180,10 +208,14 @@
             <div class="hidden md:flex items-center gap-3">
                 @guest
                     <a href="/login" class="px-6 py-2.5 bg-gray-100 text-gray-600 text-sm font-bold rounded-xl hover:bg-gray-200 transition-colors">
-                        Login Pelamar
+                        Login
                     </a>
-                    <a href="/admin" class="px-6 py-2.5 bg-kt-red text-white text-sm font-bold rounded-xl hover:bg-red-700 transition-colors shadow-lg shadow-red-100">
-                        Login Admin
+                    <a href="/register" class="px-6 py-2.5 bg-kt-red text-white text-sm font-bold rounded-xl hover:bg-red-700 transition-colors shadow-lg shadow-red-100">
+                        Daftar
+                    </a>
+                    <div class="w-px h-6 bg-gray-100 mx-2"></div>
+                    <a href="/admin" class="text-xs font-bold text-gray-400 hover:text-kt-red transition-colors">
+                        Admin
                     </a>
                 @endguest
 

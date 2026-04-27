@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\JobApplicationResource\Pages;
 use App\Models\JobApplication;
 use App\Models\WhatsappConfig;
+use App\Jobs\SendWhatsappNotification;
 use App\Services\WhatsappService;
 use App\Mail\InterviewNotification;
 use App\Mail\ApplicationAcceptedNotification;
@@ -74,6 +75,39 @@ class JobApplicationResource extends Resource
                 TextColumn::make('applicantProfile.name')
                     ->label('Pelamar')
                     ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('matching_score')
+                    ->label('Match Score')
+                    ->getStateUsing(function (JobApplication $record) {
+                        $vacancySkills = $record->vacancy->skills->pluck('id')->toArray();
+                        $applicantSkills = $record->applicantProfile->skills->pluck('id')->toArray();
+                        
+                        if (count($vacancySkills) === 0) {
+                            return '100%';
+                        }
+                        
+                        $intersect = array_intersect($vacancySkills, $applicantSkills);
+                        $score = (count($intersect) / count($vacancySkills)) * 100;
+                        
+                        return round($score) . '%';
+                    })
+                    ->badge()
+                    ->color(fn (string $state): string => match (true) {
+                        (int) $state >= 80 => 'success',
+                        (int) $state >= 50 => 'warning',
+                        default => 'danger',
+                    }),
+
+                TextColumn::make('interview_score')
+                    ->label('Score Interview')
+                    ->formatStateUsing(fn ($state) => $state ? str_repeat('⭐', $state) : '-')
+                    ->color('warning')
+                    ->sortable(),
+
+                TextColumn::make('start_date')
+                    ->label('Tgl Bekerja')
+                    ->date('d M Y')
                     ->sortable(),
 
                 TextColumn::make('created_at')
@@ -176,6 +210,19 @@ class JobApplicationResource extends Resource
                                     ->required(),
                             ])
                             ->visible(fn (Forms\Get $get) => $get('status') === 'Interview'),
+
+                        // Conditional fields for Diterima
+                        Forms\Components\Section::make('Detail Penerimaan')
+                            ->schema([
+                                Forms\Components\DatePicker::make('start_date')
+                                    ->label('Tanggal Mulai Bekerja')
+                                    ->required(),
+                                Forms\Components\Textarea::make('onboarding_notes')
+                                    ->label('Catatan / Persiapan')
+                                    ->placeholder('Sebutkan dokumen yang harus dibawa, dll...')
+                                    ->required(),
+                            ])
+                            ->visible(fn (Forms\Get $get) => $get('status') === 'Diterima'),
                     ])
                     ->action(function (JobApplication $record, array $data) {
                         $newStatus = $data['status'];
@@ -188,6 +235,11 @@ class JobApplicationResource extends Resource
                             $updateData['interview_location'] = $data['interview_location'];
                         }
 
+                        if ($newStatus === 'Diterima') {
+                            $updateData['start_date'] = $data['start_date'];
+                            $updateData['onboarding_notes'] = $data['onboarding_notes'];
+                        }
+
                         $record->update($updateData);
 
                         // Notification Logic
@@ -195,6 +247,44 @@ class JobApplicationResource extends Resource
                             self::sendNotifications($record, $newStatus, $data);
                         }
                     }),
+
+                Action::make('inputInterviewResult')
+                    ->label('Input Hasil Interview')
+                    ->icon('heroicon-o-star')
+                    ->color('success')
+                    ->modalHeading(fn ($record) => in_array($record->status, ['Diterima', 'Ditolak']) ? 'Hasil Penilaian Interview (Read-only)' : 'Penilaian Interview')
+                    ->modalSubmitAction(fn ($record) => in_array($record->status, ['Diterima', 'Ditolak']) ? false : null)
+                    ->mountUsing(fn (Forms\ComponentContainer $form, JobApplication $record) => $form->fill([
+                        'interview_score' => $record->interview_score,
+                        'interview_notes' => $record->interview_notes,
+                    ]))
+                    ->form([
+                        Forms\Components\Select::make('interview_score')
+                            ->label('Rating Interview')
+                            ->options([
+                                1 => '⭐ (Buruk)',
+                                2 => '⭐⭐ (Cukup)',
+                                3 => '⭐⭐⭐ (Baik)',
+                                4 => '⭐⭐⭐⭐ (Sangat Baik)',
+                                5 => '⭐⭐⭐⭐⭐ (Luar Biasa)',
+                            ])
+                            ->required()
+                            ->disabled(fn ($record) => in_array($record->status, ['Diterima', 'Ditolak'])),
+                        Forms\Components\Textarea::make('interview_notes')
+                            ->label('Catatan Interview')
+                            ->placeholder('Masukkan catatan hasil interview di sini...')
+                            ->rows(5)
+                            ->disabled(fn ($record) => in_array($record->status, ['Diterima', 'Ditolak'])),
+                    ])
+                    ->action(function (JobApplication $record, array $data) {
+                        $record->update($data);
+                        
+                        \Filament\Notifications\Notification::make()
+                            ->title('Hasil interview berhasil disimpan')
+                            ->success()
+                            ->send();
+                    })
+                    ->visible(fn ($record) => in_array($record->status, ['Interview', 'Diterima', 'Ditolak'])),
 
                 Action::make('view_cv')
                     ->label('CV')
@@ -240,6 +330,17 @@ class JobApplicationResource extends Resource
                                         ->required(),
                                 ])
                                 ->visible(fn (Forms\Get $get) => $get('status') === 'Interview'),
+
+                            Forms\Components\Section::make('Detail Penerimaan')
+                                ->schema([
+                                    Forms\Components\DatePicker::make('start_date')
+                                        ->label('Tanggal Mulai Bekerja')
+                                        ->required(),
+                                    Forms\Components\Textarea::make('onboarding_notes')
+                                        ->label('Catatan / Persiapan')
+                                        ->required(),
+                                ])
+                                ->visible(fn (Forms\Get $get) => $get('status') === 'Diterima'),
                         ])
                         ->action(function (\Illuminate\Database\Eloquent\Collection $records, array $data) {
                             $newStatus = $data['status'];
@@ -251,6 +352,11 @@ class JobApplicationResource extends Resource
                                     $updateData['interview_date'] = $data['interview_date'];
                                     $updateData['interview_time'] = $data['interview_time'];
                                     $updateData['interview_location'] = $data['interview_location'];
+                                }
+
+                                if ($newStatus === 'Diterima') {
+                                    $updateData['start_date'] = $data['start_date'];
+                                    $updateData['onboarding_notes'] = $data['onboarding_notes'];
                                 }
 
                                 $record->update($updateData);
@@ -268,7 +374,8 @@ class JobApplicationResource extends Resource
                         }),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['vacancy.skills', 'applicantProfile.skills']));
     }
 
     protected static function sendNotifications(JobApplication $application, string $status, array $data)
@@ -291,7 +398,10 @@ class JobApplicationResource extends Resource
             Mail::to($applicant->email)->send(new InterviewNotification($application, $data));
         } 
         elseif ($status === 'Diterima') {
-            $message = "Halo *$name*,\n\nSelamat! Anda dinyatakan *DITERIMA* untuk posisi *$jobTitle* di Karang Taruna Desa Campaka. Tim kami akan segera menghubungi Anda untuk proses selanjutnya.\n\nTerima kasih atas partisipasinya.";
+            $startDate = \Carbon\Carbon::parse($data['start_date'])->format('d M Y');
+            $notes = $data['onboarding_notes'];
+            
+            $message = "Halo *$name*,\n\nSelamat! Anda dinyatakan *DITERIMA* untuk posisi *$jobTitle* di Karang Taruna Desa Campaka.\n\nDetail Bergabung:\n📅 Tanggal Mulai: $startDate\n📝 Catatan/Persiapan: $notes\n\nTim kami akan segera menghubungi Anda untuk proses selanjutnya. Terima kasih.";
             
             Mail::to($applicant->email)->send(new ApplicationAcceptedNotification($application));
         } 
@@ -301,9 +411,9 @@ class JobApplicationResource extends Resource
             Mail::to($applicant->email)->send(new ApplicationRejectedNotification($application));
         }
 
-        // Send WhatsApp
+        // Send WhatsApp via Queue
         if (!empty($applicant->phone)) {
-            WhatsappService::sendMessage($applicant->phone, $message);
+            SendWhatsappNotification::dispatch($applicant->phone, $message);
         }
     }
 

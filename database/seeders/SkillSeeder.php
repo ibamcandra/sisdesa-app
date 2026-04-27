@@ -10,71 +10,89 @@ class SkillSeeder extends Seeder
     public function run(): void
     {
         $skills = [
-            // IT & Software Development
-            ['name' => 'PHP', 'description' => 'Bahasa pemrograman server-side'],
-            ['name' => 'Laravel', 'description' => 'Framework PHP populer'],
-            ['name' => 'JavaScript', 'description' => 'Bahasa pemrograman web'],
-            ['name' => 'React.js', 'description' => 'Library JS untuk UI'],
-            ['name' => 'Vue.js', 'description' => 'Progressive framework JS'],
-            ['name' => 'Python', 'description' => 'Bahasa pemrograman serbaguna'],
-            ['name' => 'Django', 'description' => 'Framework Python'],
-            ['name' => 'MySQL', 'description' => 'Sistem manajemen database'],
-            ['name' => 'PostgreSQL', 'description' => 'RDBMS open source'],
-            ['name' => 'Docker', 'description' => 'Platform containerization'],
-            ['name' => 'Git', 'description' => 'Version control system'],
-            ['name' => 'AWS', 'description' => 'Cloud computing platform'],
-            ['name' => 'Mobile Development (Flutter)', 'description' => 'Framework aplikasi mobile'],
-            ['name' => 'UI/UX Design', 'description' => 'Desain antarmuka & pengalaman pengguna'],
-            
-            // Design & Creative
-            ['name' => 'Adobe Photoshop', 'description' => 'Editing foto & desain grafis'],
-            ['name' => 'Adobe Illustrator', 'description' => 'Desain vektor'],
-            ['name' => 'Figma', 'description' => 'Tools desain UI/UX'],
-            ['name' => 'CorelDRAW', 'description' => 'Desain grafis'],
-            ['name' => 'Video Editing (Premiere Pro)', 'description' => 'Pengeditan video profesional'],
-            ['name' => 'Motion Graphics', 'description' => 'Desain grafis bergerak'],
-            
-            // Marketing & Sales
-            ['name' => 'Digital Marketing', 'description' => 'Pemasaran melalui media digital'],
-            ['name' => 'SEO (Search Engine Optimization)', 'description' => 'Optimasi mesin pencari'],
-            ['name' => 'Social Media Management', 'description' => 'Pengelolaan akun media sosial'],
-            ['name' => 'Copywriting', 'description' => 'Teknik penulisan teks iklan'],
-            ['name' => 'Sales Negotiation', 'description' => 'Keterampilan negosiasi penjualan'],
-            ['name' => 'Market Research', 'description' => 'Riset pasar'],
-            
-            // Finance & Accounting
-            ['name' => 'Accounting', 'description' => 'Akuntansi dasar & lanjutan'],
-            ['name' => 'Financial Auditing', 'description' => 'Audit keuangan'],
-            ['name' => 'Taxation (Perpajakan)', 'description' => 'Pemahaman hukum pajak'],
-            ['name' => 'Microsoft Excel (Advanced)', 'description' => 'Penggunaan Excel untuk data keuangan'],
-            ['name' => 'Zahir/MYOB', 'description' => 'Software akuntansi'],
-            
-            // HR & Admin
-            ['name' => 'Recruitment & Selection', 'description' => 'Proses rekrutmen karyawan'],
-            ['name' => 'Human Resources Management', 'description' => 'Manajemen sumber daya manusia'],
-            ['name' => 'Payroll Administration', 'description' => 'Pengelolaan gaji karyawan'],
-            ['name' => 'Office Administration', 'description' => 'Administrasi perkantoran'],
-            ['name' => 'Data Entry', 'description' => 'Penginputan data'],
-            
-            // Engineering & Technical
-            ['name' => 'AutoCAD', 'description' => 'Desain teknik berbantuan komputer'],
-            ['name' => 'Electrical Engineering', 'description' => 'Teknik elektro'],
-            ['name' => 'PLC Programming', 'description' => 'Pemrograman PLC industri'],
-            ['name' => 'Mechanical Maintenance', 'description' => 'Pemeliharaan mesin'],
-            
-            // Customer Service
-            ['name' => 'Customer Relationship Management (CRM)', 'description' => 'Manajemen hubungan pelanggan'],
-            ['name' => 'Communication Skills', 'description' => 'Keterampilan komunikasi'],
-            ['name' => 'Problem Solving', 'description' => 'Pemecahan masalah'],
-            ['name' => 'Telemarketing', 'description' => 'Pemasaran via telepon'],
-            
-            // Soft Skills
-            ['name' => 'Leadership', 'description' => 'Kepemimpinan'],
-            ['name' => 'Teamwork', 'description' => 'Kerja sama tim'],
-            ['name' => 'Critical Thinking', 'description' => 'Berpikir kritis'],
-            ['name' => 'Time Management', 'description' => 'Manajemen waktu'],
-            ['name' => 'Public Speaking', 'description' => 'Berbicara di depan umum'],
-            ['name' => 'Bilingual (English/Indonesian)', 'description' => 'Kemampuan dua bahasa'],
+            // Teknologi Informasi (IT) & Software
+            ['name' => 'Pemrograman PHP', 'description' => 'Hard Skill - IT & Software'],
+            ['name' => 'Pemrograman Python', 'description' => 'Hard Skill - IT & Software'],
+            ['name' => 'JavaScript', 'description' => 'Hard Skill - IT & Software'],
+            ['name' => 'Cloud Computing (AWS/Azure)', 'description' => 'Hard Skill - IT & Software'],
+            ['name' => 'Database (SQL/PostgreSQL)', 'description' => 'Hard Skill - IT & Software'],
+            ['name' => 'DevOps (Docker, Kubernetes)', 'description' => 'Hard Skill - IT & Software'],
+            ['name' => 'Cybersecurity', 'description' => 'Hard Skill - IT & Software'],
+            ['name' => 'Network Configuration', 'description' => 'Hard Skill - IT & Software'],
+
+            // Pemasaran & Digital Marketing
+            ['name' => 'SEO/SEM', 'description' => 'Hard Skill - Pemasaran & Digital Marketing'],
+            ['name' => 'Content Writing', 'description' => 'Hard Skill - Pemasaran & Digital Marketing'],
+            ['name' => 'Social Media Analytics', 'description' => 'Hard Skill - Pemasaran & Digital Marketing'],
+            ['name' => 'Email Marketing Strategy', 'description' => 'Hard Skill - Pemasaran & Digital Marketing'],
+            ['name' => 'Google Ads', 'description' => 'Hard Skill - Pemasaran & Digital Marketing'],
+            ['name' => 'Affiliate Marketing', 'description' => 'Hard Skill - Pemasaran & Digital Marketing'],
+
+            // Desain Kreatif & Multimedia
+            ['name' => 'Adobe Photoshop', 'description' => 'Hard Skill - Desain Kreatif'],
+            ['name' => 'Adobe Illustrator', 'description' => 'Hard Skill - Desain Kreatif'],
+            ['name' => 'Video Editing (Premiere/DaVinci)', 'description' => 'Hard Skill - Desain Kreatif'],
+            ['name' => 'UI/UX Design (Figma)', 'description' => 'Hard Skill - Desain Kreatif'],
+            ['name' => 'Motion Graphics', 'description' => 'Hard Skill - Desain Kreatif'],
+            ['name' => 'Fotografi', 'description' => 'Hard Skill - Desain Kreatif'],
+
+            // Keuangan & Akuntansi
+            ['name' => 'Analisis Laporan Keuangan', 'description' => 'Hard Skill - Keuangan'],
+            ['name' => 'Perpajakan (Brevet A/B)', 'description' => 'Hard Skill - Keuangan'],
+            ['name' => 'Audit', 'description' => 'Hard Skill - Keuangan'],
+            ['name' => 'Manajemen Risiko', 'description' => 'Hard Skill - Keuangan'],
+            ['name' => 'Software Akuntansi (SAP/Xero)', 'description' => 'Hard Skill - Keuangan'],
+
+            // Manajemen Proyek & Bisnis
+            ['name' => 'Business Analysis', 'description' => 'Hard Skill - Manajemen Bisnis'],
+            ['name' => 'Agile/Scrum Methodology', 'description' => 'Hard Skill - Manajemen Bisnis'],
+            ['name' => 'Supply Chain Management', 'description' => 'Hard Skill - Manajemen Bisnis'],
+            ['name' => 'Market Research', 'description' => 'Hard Skill - Manajemen Bisnis'],
+            ['name' => 'Strategic Planning', 'description' => 'Hard Skill - Manajemen Bisnis'],
+
+            // Teknik & Konstruksi
+            ['name' => 'AutoCAD/Revit', 'description' => 'Hard Skill - Teknik'],
+            ['name' => 'Structural Analysis', 'description' => 'Hard Skill - Teknik'],
+            ['name' => 'Electrical Wiring', 'description' => 'Hard Skill - Teknik'],
+            ['name' => 'Project Estimating', 'description' => 'Hard Skill - Teknik'],
+            ['name' => 'Pemeliharaan Mesin (Maintenance)', 'description' => 'Hard Skill - Teknik'],
+
+            // Kesehatan & Medis
+            ['name' => 'Diagnosa Medis', 'description' => 'Hard Skill - Medis'],
+            ['name' => 'Pengoperasian Alat Medis', 'description' => 'Hard Skill - Medis'],
+            ['name' => 'Farmakologi', 'description' => 'Hard Skill - Medis'],
+            ['name' => 'Keperawatan Kritis', 'description' => 'Hard Skill - Medis'],
+            ['name' => 'Medical Coding', 'description' => 'Hard Skill - Medis'],
+
+            // Pendidikan & Pelatihan
+            ['name' => 'Penyusunan Kurikulum', 'description' => 'Hard Skill - Pendidikan'],
+            ['name' => 'Metodologi Pembelajaran', 'description' => 'Hard Skill - Pendidikan'],
+            ['name' => 'Evaluasi Pendidikan', 'description' => 'Hard Skill - Pendidikan'],
+            ['name' => 'LMS Management', 'description' => 'Hard Skill - Pendidikan'],
+
+            // Administrasi & Perkantoran
+            ['name' => 'Data Entry', 'description' => 'Hard Skill - Administrasi'],
+            ['name' => 'Manajemen Kearsipan', 'description' => 'Hard Skill - Administrasi'],
+            ['name' => 'Advanced Microsoft Excel', 'description' => 'Hard Skill - Administrasi'],
+            ['name' => 'Kesekretariatan', 'description' => 'Hard Skill - Administrasi'],
+
+            // Soft Skill - Komunikasi
+            ['name' => 'Komunikasi Efektif', 'description' => 'Soft Skill - Interpersonal'],
+            ['name' => 'Negosiasi', 'description' => 'Soft Skill - Interpersonal'],
+            ['name' => 'Public Speaking', 'description' => 'Soft Skill - Interpersonal'],
+            ['name' => 'Empati', 'description' => 'Soft Skill - Interpersonal'],
+
+            // Soft Skill - Kepemimpinan
+            ['name' => 'Leadership', 'description' => 'Soft Skill - Manajemen Diri'],
+            ['name' => 'Manajemen Waktu', 'description' => 'Soft Skill - Manajemen Diri'],
+            ['name' => 'Problem Solving', 'description' => 'Soft Skill - Manajemen Diri'],
+            ['name' => 'Pengambilan Keputusan', 'description' => 'Soft Skill - Manajemen Diri'],
+
+            // Soft Skill - Adaptabilitas
+            ['name' => 'Fleksibilitas', 'description' => 'Soft Skill - Sikap Kerja'],
+            ['name' => 'Resiliensi (Ketahanan)', 'description' => 'Soft Skill - Sikap Kerja'],
+            ['name' => 'Kerja Sama Tim (Teamwork)', 'description' => 'Soft Skill - Sikap Kerja'],
+            ['name' => 'Berpikir Kritis (Critical Thinking)', 'description' => 'Soft Skill - Sikap Kerja'],
         ];
 
         foreach ($skills as $skill) {
