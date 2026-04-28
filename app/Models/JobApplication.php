@@ -13,4 +13,11 @@ class JobApplication extends Model {
 
     public function vacancy(): BelongsTo { return $this->belongsTo(Vacancy::class); }
     public function applicantProfile(): BelongsTo { return $this->belongsTo(ApplicantProfile::class); }
+
+    protected static function booted()
+    {
+        static::created(function ($application) {
+            \App\Jobs\AnalyzeJobApplicationScore::dispatch($application);
+        });
+    }
 }

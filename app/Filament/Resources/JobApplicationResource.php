@@ -79,25 +79,24 @@ class JobApplicationResource extends Resource
 
                 TextColumn::make('matching_score')
                     ->label('Match Score')
-                    ->getStateUsing(function (JobApplication $record) {
-                        $vacancySkills = $record->vacancy->skills->pluck('id')->toArray();
-                        $applicantSkills = $record->applicantProfile->skills->pluck('id')->toArray();
-                        
-                        if (count($vacancySkills) === 0) {
-                            return '100%';
+                    ->formatStateUsing(function ($record, $state) {
+                        if ($record->scoring_status === 'processing' || $record->scoring_status === 'pending') {
+                            return '⏳ Progres...';
                         }
-                        
-                        $intersect = array_intersect($vacancySkills, $applicantSkills);
-                        $score = (count($intersect) / count($vacancySkills)) * 100;
-                        
-                        return round($score) . '%';
+                        if ($record->scoring_status === 'failed') {
+                            return '❌ Gagal';
+                        }
+                        return ($state ?? 0) . '%';
                     })
                     ->badge()
-                    ->color(fn (string $state): string => match (true) {
+                    ->color(fn ($record, $state): string => match (true) {
+                        $record->scoring_status === 'processing' || $record->scoring_status === 'pending' => 'info',
+                        $record->scoring_status === 'failed' => 'danger',
                         (int) $state >= 80 => 'success',
                         (int) $state >= 50 => 'warning',
                         default => 'danger',
-                    }),
+                    })
+                    ->tooltip(fn ($record) => $record->matching_reason),
 
                 TextColumn::make('interview_score')
                     ->label('Score Interview')
@@ -171,6 +170,7 @@ class JobApplicationResource extends Resource
                         'Ditolak' => 'Ditolak',
                     ]),
             ])
+            ->defaultSort('matching_score', 'desc')
             ->actions([
                 // Custom Action for Updating Status with Notifications
                 Action::make('updateStatus')
@@ -291,6 +291,43 @@ class JobApplicationResource extends Resource
                     ->icon('heroicon-o-document-text')
                     ->url(fn (JobApplication $record): string => route('admin.applicant.cv', $record->applicant_profile_id))
                     ->openUrlInNewTab(),
+
+                Action::make('viewAIReason')
+                    ->label('Analisis AI')
+                    ->icon('heroicon-o-cpu-chip')
+                    ->color('info')
+                    ->modalHeading('Analisis Kecocokan AI')
+                    ->modalSubmitAction(false)
+                    ->visible(fn ($record) => $record->scoring_status === 'success')
+                    ->form([
+                        Forms\Components\Placeholder::make('ai_score')
+                            ->label('Skor Kecocokan')
+                            ->content(fn ($record) => $record->matching_score . '%'),
+                        Forms\Components\Placeholder::make('ai_reason')
+                            ->label('Analisis AI')
+                            ->content(fn ($record) => $record->matching_reason),
+                    ]),
+
+                Action::make('retryScoring')
+                    ->label('Retry AI')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalHeading('Ulangi Analisis AI?')
+                    ->modalDescription('Ini akan mengirim ulang data pelamar ke AI Gemini untuk dianalisis kembali.')
+                    ->action(function (JobApplication $record) {
+                        $record->update([
+                            'scoring_status' => 'pending',
+                            'matching_reason' => 'Sedang dijadwalkan ulang...'
+                        ]);
+                        \App\Jobs\AnalyzeJobApplicationScore::dispatch($record);
+                        
+                        \Filament\Notifications\Notification::make()
+                            ->title('Analisis AI telah dijadwalkan ulang')
+                            ->success()
+                            ->send();
+                    })
+                    ->visible(fn ($record) => in_array($record->scoring_status, ['failed', 'processing', 'pending'])),
 
                 Action::make('download_cv')
                     ->label('PDF')

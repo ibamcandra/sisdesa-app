@@ -16,6 +16,23 @@ services:
     networks:
       - sisdesa-net
 
+  # Queue Worker
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sisdesa-app
+    container_name: sisdesa-worker
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    command: php artisan queue:work --tries=3 --timeout=120
+    depends_on:
+      - db
+    networks:
+      - sisdesa-net
+
   # Database PostgreSQL
   db:
     image: postgres:15-alpine
